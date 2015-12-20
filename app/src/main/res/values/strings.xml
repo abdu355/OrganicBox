@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">OrganicBox</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_splash">Splash</string>
+    <string name="title_activity_login">Login</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_signup">Sign Up</string>
+    <string name="et_usremail" />
+    <string name="login_error_message">fill all fields</string>
+    <string name="login_error_title">Invalid</string>
+    <string name="title_activity_signup">Signup</string>
+    <string name="et_name">Name</string>
+    <string name="et_passsign">password</string>
+    <string name="et_emailsign">Email</string>
+    <string name="et_dob">Date of Birth</string>
+    <string name="signup_error_message">fill all fields correctly</string>
+    <string name="signup_error_title">Invalid</string>
+    <string name="logout_label">Logout</string>
+    <string name="title_activity_single_item_view">SingleItemView</string>
+    <string name="namelabel" />
+    <string name="name" />
+    <string name="date" />
+    <string name="type" />
+    <string name="status" />
+    <string name="userview_main" />
+    <string name="ordernum" />
+    <string name="ordernumlabel" />
+    <string name="datelabel" />
+</resources>
