@@ -28,14 +28,7 @@ public class SingleItemView extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         // Retrieve data from MainActivity on item click event
         Intent i = getIntent();
@@ -44,7 +37,7 @@ public class SingleItemView extends AppCompatActivity {
         name = i.getStringExtra("name");
         type=i.getStringExtra("type");
         if(type.equals("pack"))
-            type="pack x12";
+            type="pack 2KG";
         date=i.getStringExtra("date");
         status=i.getStringExtra("status");
         order_id=i.getStringExtra("ordernum");

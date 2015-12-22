@@ -17,17 +17,32 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/userview_main"
-        android:id="@+id/userview_main" />
+        android:id="@+id/userview_main"
+        android:textColor="#060000"
+        android:textStyle="bold"
+        android:typeface="serif" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lv_orders"
-        android:layout_below="@+id/userview_main"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:divider="@drawable/divider"
         android:dividerHeight="3px"
-        android:paddingTop="20dp" />
+        android:paddingTop="25dp"
+        android:layout_below="@+id/map_btn" />
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:id="@+id/map_btn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:src="@drawable/mapsicon"
+        android:layout_marginRight="-15dp"
+        android:longClickable="true" />
 
 </RelativeLayout>

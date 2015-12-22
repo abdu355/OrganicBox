@@ -3,6 +3,7 @@ package com.example.b00047562.organicbox;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,8 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -33,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     ListView orders;
     List<ParseObject> ob;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     TextView userview;
     private List<OrderBox> orderBoxList = null;
     final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private ImageView mapbtn;
 
 //hello
     @Override
@@ -52,11 +56,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setBackgroundColor(Color.parseColor("#e8f5e9"));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "New Order", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                startActivity(new Intent(getApplicationContext(), NewOrder.class));
             }
         });
         ParseUser currentUser = ParseUser.getCurrentUser();//check if user logged in
@@ -66,8 +71,11 @@ public class MainActivity extends AppCompatActivity {
 
         userview = (TextView)findViewById(R.id.userview_main);
         orders =(ListView)findViewById(R.id.lv_orders);
+        mapbtn=(ImageView)findViewById(R.id.map_btn);
 
         userview.setText(currentUser.getUsername()+"'s List of Orders");
+        mapbtn.setOnClickListener(this);
+
 
     }
     public void loadLoginView() {
@@ -108,7 +116,17 @@ public class MainActivity extends AppCompatActivity {
         new RemoteDataTask().execute();
     }
 
-     //RemoteDataTask AsyncTask
+    @Override
+    public void onClick(View v) {
+        switch(v.getId())
+        {
+            case R.id.map_btn:
+                startActivity(new Intent(this,MapsActivity.class));
+                break;
+        }
+    }
+
+    //RemoteDataTask AsyncTask
     private class RemoteDataTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -164,7 +182,12 @@ public class MainActivity extends AppCompatActivity {
             adapter = new ListViewAdapter(MainActivity.this,
                     orderBoxList);
             // Binds the Adapter to the ListView
-            orders.setAdapter(adapter);
+            if(adapter.getCount()!=0){
+                orders.setAdapter(adapter);
+            }else{
+                Toast.makeText(MainActivity.this, "No Items Available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Click to Add new Order --->", Toast.LENGTH_SHORT).show();
+            }
             // Close the progressdialog
             mProgressDialog.dismiss();
 

@@ -22,8 +22,19 @@
     <string name="date" />
     <string name="type" />
     <string name="status" />
-    <string name="userview_main" />
+    <string name="userview_main">List of Orders</string>
     <string name="ordernum" />
     <string name="ordernumlabel" />
     <string name="datelabel" />
+    <string name="map_btn">Branches</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_new_order">NewOrder</string>
+    <string name="et_searchbox" />
+    <string name="wish_btn">Add to Wishlist</string>
+    <string name="addbasket_btn">Add to Basket</string>
+    <string name="tv_outofstockalert" />
+    <string name="title_activity_single_new_order_view">SingleNewOrderView</string>
+
+
+
 </resources>
