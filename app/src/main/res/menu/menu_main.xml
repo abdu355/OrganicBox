@@ -11,4 +11,9 @@
         android:id="@+id/action_logout"
         android:title="@string/logout_label">
     </item>
+    <item
+        android:id="@+id/action_wishlist"
+        android:title="@string/wishlist_label"
+        app:showAsAction="always">
+    </item>
 </menu>

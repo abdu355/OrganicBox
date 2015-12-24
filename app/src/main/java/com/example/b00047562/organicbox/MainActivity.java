@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView userview;
     private List<OrderBox> orderBoxList = null;
     final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    private ImageView mapbtn;
+    private ImageView mapbtn,basketbtn;
 
 //hello
     @Override
@@ -72,9 +72,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userview = (TextView)findViewById(R.id.userview_main);
         orders =(ListView)findViewById(R.id.lv_orders);
         mapbtn=(ImageView)findViewById(R.id.map_btn);
+        basketbtn=(ImageView)findViewById(R.id.basket_btn);
 
         userview.setText(currentUser.getUsername()+"'s List of Orders");
         mapbtn.setOnClickListener(this);
+        basketbtn.setOnClickListener(this);
 
 
     }
@@ -106,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ParseUser.logOut();//update Parse current user
             loadLoginView();//load login activity
         }
+        if(id==R.id.action_wishlist)
+        {
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -122,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.map_btn:
                 startActivity(new Intent(this,MapsActivity.class));
+                break;
+            case R.id.basket_btn:
+                startActivity(new Intent(this,MyBasket.class));
                 break;
         }
     }
@@ -148,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ParseUser usr = ParseUser.getCurrentUser();
             // Locate the class table named "Country" in Parse.com
             ParseQuery<ParseObject> query = new ParseQuery("Orders");
-            query.whereEqualTo("username", usr.getUsername());
+            query.whereEqualTo("createdBy", ParseUser.getCurrentUser());
             query.include("image");
             query.orderByDescending("createdAt");
 
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     map.setStatus((String)order.get("tracker_status"));
                     orderBoxList.add(map);
                 }
-            } catch (ParseException e) {
+            } catch (ParseException |NullPointerException e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }

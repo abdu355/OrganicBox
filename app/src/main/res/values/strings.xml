@@ -34,7 +34,18 @@
     <string name="addbasket_btn">Add to Basket</string>
     <string name="tv_outofstockalert" />
     <string name="title_activity_single_new_order_view">SingleNewOrderView</string>
-
+    <string name="title_activity_my_basket">MyBasket</string>
+    <string name="clear_btn">Clear Basket</string>
+    <string name="checkout_btn">Checkout</string>
+    <string name="title_activity_checkout">CheckoutActivity</string>
+    <string name="tv_check_billadd">Billing Address</string>
+    <string name="tv_check_cardnum">Credit Card</string>
+    <string name="btn_checkout_pay"><![CDATA[Validate & Pay]]></string>
+    <string name="editText_billadd" />
+    <string name="editText_creditcardnum" />
+    <string name="editText_CVC" />
+    <string name="btn_paybasket">QuickPay</string>
+    <string name="wishlist_label">Wishlist</string>
 
 
 </resources>

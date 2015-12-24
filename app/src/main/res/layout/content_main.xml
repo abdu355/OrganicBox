@@ -13,14 +13,16 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/userview_main"
         android:id="@+id/userview_main"
         android:textColor="#060000"
         android:textStyle="bold"
-        android:typeface="serif" />
+        android:typeface="serif"
+        android:ellipsize="none"
+        android:singleLine="false"/>
 
     <ListView
         android:layout_width="wrap_content"
@@ -34,7 +36,7 @@
         android:layout_below="@+id/map_btn" />
 
     <ImageView
-        android:layout_width="80dp"
+        android:layout_width="60dp"
         android:layout_height="40dp"
         android:id="@+id/map_btn"
         android:layout_alignParentTop="true"
@@ -42,7 +44,21 @@
         android:layout_alignParentEnd="true"
         android:clickable="true"
         android:src="@drawable/mapsicon"
-        android:layout_marginRight="-15dp"
-        android:longClickable="true" />
+        android:layout_marginRight="-12dp"
+        android:longClickable="true"
+        android:background="#b2ebf2" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:id="@+id/basket_btn"
+        android:layout_above="@+id/lv_orders"
+        android:layout_toLeftOf="@+id/map_btn"
+        android:layout_toStartOf="@+id/map_btn"
+        android:src="@drawable/buy100"
+        android:clickable="true"
+        android:longClickable="true"
+        android:layout_marginRight="-8dp"
+        android:background="#bcaaa4" />
 
 </RelativeLayout>
