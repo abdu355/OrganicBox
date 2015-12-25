@@ -111,7 +111,15 @@
         <activity
             android:name=".CheckoutActivity"
             android:label="@string/title_activity_checkout"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Wishlist"
+            android:label="@string/title_activity_wishlist"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.b00047562.organicbox.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

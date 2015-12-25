@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -117,6 +118,7 @@ public class SingleNewOrderView extends AppCompatActivity implements View.OnClic
                 basket.put("createdBy", ParseUser.getCurrentUser());
                 basket.put("image",ParseObject.createWithoutData("Stock", myMap.get(name)));
                 basket.saveInBackground();
+                Toast.makeText(getApplicationContext(),"Item Added to Basket",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.addtowish_btn:
                 ParseObject wishlist = new ParseObject("WishList");
@@ -125,6 +127,7 @@ public class SingleNewOrderView extends AppCompatActivity implements View.OnClic
                 wishlist.put("createdBy", ParseUser.getCurrentUser());
                 wishlist.put("image",ParseObject.createWithoutData("Stock", myMap.get(name)));
                 wishlist.saveInBackground();
+                Toast.makeText(getApplicationContext(),"Item Added to Wishlist",Toast.LENGTH_SHORT).show();
                 break;
         }
     }

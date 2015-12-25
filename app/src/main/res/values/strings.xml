@@ -16,7 +16,7 @@
     <string name="signup_error_message">fill all fields correctly</string>
     <string name="signup_error_title">Invalid</string>
     <string name="logout_label">Logout</string>
-    <string name="title_activity_single_item_view">SingleItemView</string>
+    <string name="title_activity_single_item_view">Item</string>
     <string name="namelabel" />
     <string name="name" />
     <string name="date" />
@@ -28,13 +28,13 @@
     <string name="datelabel" />
     <string name="map_btn">Branches</string>
     <string name="title_activity_maps">Map</string>
-    <string name="title_activity_new_order">NewOrder</string>
+    <string name="title_activity_new_order">New Order</string>
     <string name="et_searchbox" />
     <string name="wish_btn">Add to Wishlist</string>
     <string name="addbasket_btn">Add to Basket</string>
     <string name="tv_outofstockalert" />
-    <string name="title_activity_single_new_order_view">SingleNewOrderView</string>
-    <string name="title_activity_my_basket">MyBasket</string>
+    <string name="title_activity_single_new_order_view">Item</string>
+    <string name="title_activity_my_basket">My Basket</string>
     <string name="clear_btn">Clear Basket</string>
     <string name="checkout_btn">Checkout</string>
     <string name="title_activity_checkout">CheckoutActivity</string>
@@ -46,6 +46,9 @@
     <string name="editText_CVC" />
     <string name="btn_paybasket">QuickPay</string>
     <string name="wishlist_label">Wishlist</string>
+    <string name="refresh_label">Refresh</string>
+    <string name="title_activity_wishlist">Wishlist</string>
+    <string name="clear_wishlist">Clear Wishlist</string>
 
 
 </resources>

@@ -1,19 +1,18 @@
 package com.example.b00047562.organicbox;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -39,7 +38,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener 
     ListView orders;
     List<ParseObject> ob;
     ProgressDialog mProgressDialog;
-    BasketWishAdapter adapter;
+    BasketAdapter adapter;
     private List<OrderBox> orderBoxList = null;
     Button checkout, quickpay,clear;
 
@@ -61,8 +60,8 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener 
         quickpay.setOnClickListener(this);
         clear.setOnClickListener(this);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();//required by Stripe
+        StrictMode.setThreadPolicy(policy);//required by Stripe
     }
 
     @Override
@@ -78,7 +77,38 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener 
                 startActivity(new Intent(this, CheckoutActivity.class));
                 break;
             case R.id.btn_paybasket:
-                new UpdateListsTask().execute();
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("Returning Customer")
+                        .setMessage("Pay Now?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new UpdateListsTask().execute();
+                            }
+
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+
+                break;
+            case R.id.clear_btn:
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Empty Basket")
+                        .setMessage("Are you sure you want to clear your basket?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                               //clear basket
+                                clearBasket();
+                            }
+
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
                 break;
         }
     }
@@ -131,7 +161,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener 
         protected void onPostExecute(Void result) {
             orders = (ListView) findViewById(R.id.list_basket);
             // Pass the results into ListViewAdapter.java
-            adapter = new BasketWishAdapter(MyBasket.this,
+            adapter = new BasketAdapter(MyBasket.this,
                     orderBoxList);
             // Binds the Adapter to the ListView
             if (adapter.getCount() != 0) {
@@ -187,20 +217,22 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener 
                     public void done(List<ParseObject> basketlist, ParseException e) {
                         if (e == null) {
                             int size= basketlist.size();
+                            List<ParseObject> neworderslist = new ArrayList<ParseObject>();
                             ParseObject orderlist = new ParseObject("Orders");
                             /*TODO
                                  fix this function
                              */
                             for (int i = 0; i < size; i++) {
+                                orderlist = new ParseObject("Orders");
                                 orderlist.put("username", ParseUser.getCurrentUser().getUsername());
                                 orderlist.put("createdBy", ParseUser.getCurrentUser());
                                 orderlist.put("name", basketlist.get(i).get("name"));
                                 orderlist.put("type", basketlist.get(i).get("type"));
-                                orderlist.put("orderaddress",ParseUser.getCurrentUser().get("BillingAddress"));
-                                orderlist.put("image",basketlist.get(i).get("image"));
-                                orderlist.saveInBackground();
-
+                                orderlist.put("orderaddress", ParseUser.getCurrentUser().get("BillingAddress"));
+                                orderlist.put("image", basketlist.get(i).get("image"));
+                                neworderslist.add(i, orderlist);
                             }
+                            orderlist.saveAllInBackground(neworderslist);
                             for(int i=0; i<size;i++)
                             {
                                 try {
@@ -229,8 +261,33 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener 
         protected void onPostExecute(Void result) {
 
             mProgressDialog.dismiss();
+            finish();
 
         }
+    }
+    private void clearBasket()
+    {
+        ParseQuery<ParseObject> querybasket = ParseQuery.getQuery("Basket");
+        querybasket.whereEqualTo("createdBy", ParseUser.getCurrentUser());
+        querybasket.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> basketlist, ParseException e) {
+                if (e == null) {
+                    int size= basketlist.size();
+                    for(int i=0; i<size;i++)
+                    {
+                        try {
+                            basketlist.get(i).delete();
+                        } catch (ParseException e1) {
+                            Toast.makeText(getApplicationContext(), "Basket Clear Failed", Toast.LENGTH_SHORT).show();
+                            Log.d("ParseBasket",e1.getMessage());
+                        }
+                    }
+                } else {
+
+                }
+            }
+        });
+
     }
 
 }

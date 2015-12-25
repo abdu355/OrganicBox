@@ -35,6 +35,7 @@ import com.stripe.model.Charge;
 import com.stripe.model.Customer;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,8 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         eyear = (EditText) findViewById(R.id.editText_expiryyear);
         emonth = (EditText) findViewById(R.id.editTextexpirymonth);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();//required by Stripe
+        StrictMode.setThreadPolicy(policy);//required by Stripe
 
     }
 
@@ -143,25 +144,33 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                 public void done(List<ParseObject> basketlist, ParseException e) {
                                     if (e == null) {
                                         int size = basketlist.size();
+                                        List<ParseObject> neworderslist = new ArrayList<ParseObject>();
                                         ParseObject orderlist = new ParseObject("Orders");
                                          /*TODO
                                             fix this function
                                          */
                                         for (int i = 0; i < size; i++) {
+                                            orderlist = new ParseObject("Orders");
                                             orderlist.put("username", ParseUser.getCurrentUser().getUsername());
                                             orderlist.put("createdBy", ParseUser.getCurrentUser());
                                             orderlist.put("name", basketlist.get(i).get("name"));
                                             orderlist.put("type", basketlist.get(i).get("type"));
                                             orderlist.put("orderaddress", billadd.getText().toString());
-                                            orderlist.saveInBackground();
+                                            orderlist.put("image", basketlist.get(i).get("image"));
+                                            neworderslist.add(i, orderlist);
+                                        }
+                                        orderlist.saveAllInBackground(neworderslist);
+                                        for(int i=0; i<size;i++)
+                                        {
                                             try {
                                                 basketlist.get(i).delete();
                                                 //basketlist.get(i).saveInBackground();
                                             } catch (ParseException e1) {
                                                 Toast.makeText(getApplicationContext(), "Basket Clear Failed", Toast.LENGTH_SHORT).show();
-                                                Log.d("ParseBasket", e1.getMessage());
+                                                Log.d("ParseBasket",e1.getMessage());
                                             }
                                         }
+
                                     } else {
 
                                     }
@@ -212,6 +221,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         protected void onPostExecute(Void result) {
 
             mProgressDialog.dismiss();
+            finish();
 
         }
     }

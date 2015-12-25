@@ -110,7 +110,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(id==R.id.action_wishlist)
         {
-
+                startActivity(new Intent(this,Wishlist.class));
+        }
+        if(id==R.id.action_refresh)
+        {
+            new RemoteDataTask().execute();
         }
 
         return super.onOptionsItemSelected(item);
