@@ -1,12 +1,19 @@
 package com.example.b00047562.organicbox;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,10 +22,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -42,12 +53,18 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-public class CheckoutActivity extends AppCompatActivity implements View.OnClickListener {
+public class CheckoutActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    /*TODO
+    Add price tags to each item
+     */
 
     EditText billadd, cardnum, cvc, eyear, emonth;
     Button pay;
     Customer customer;
     ProgressDialog mProgressDialog;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
 
 
     @Override
@@ -70,6 +87,12 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();//required by Stripe
         StrictMode.setThreadPolicy(policy);//required by Stripe
 
+        //Google Location Services
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        } else{}
+        //Toast.makeText(this, "Not connected...", Toast.LENGTH_SHORT).show();
+        //Google Location Services
     }
 
     @Override
@@ -146,9 +169,6 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                         int size = basketlist.size();
                                         List<ParseObject> neworderslist = new ArrayList<ParseObject>();
                                         ParseObject orderlist = new ParseObject("Orders");
-                                         /*TODO
-                                            fix this function
-                                         */
                                         for (int i = 0; i < size; i++) {
                                             orderlist = new ParseObject("Orders");
                                             orderlist.put("username", ParseUser.getCurrentUser().getUsername());
@@ -157,6 +177,8 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                             orderlist.put("type", basketlist.get(i).get("type"));
                                             orderlist.put("orderaddress", billadd.getText().toString());
                                             orderlist.put("image", basketlist.get(i).get("image"));
+                                            orderlist.put("tracker_status","Preparing");
+                                            orderlist.put("order_loc", new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                                             neworderslist.add(i, orderlist);
                                         }
                                         orderlist.saveAllInBackground(neworderslist);
@@ -221,10 +243,64 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         protected void onPostExecute(Void result) {
 
             mProgressDialog.dismiss();
+            Vibrator vibe = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE) ;
+            vibe.vibrate(50); // 50 is time in ms
             finish();
 
         }
     }
+
+    public static void displayPromptForEnablingGPS(final Activity activity)
+    {
+
+        final AlertDialog.Builder builder =  new AlertDialog.Builder(activity);
+        final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+        final String message = "Do you want open GPS setting?";
+
+        builder.setMessage(message)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                activity.startActivity(new Intent(action));
+                                d.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();
+    }
+    //Google Location Services
+    @Override
+    public void onConnected(Bundle bundle) {
+
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "Failed to connect to GPS", Toast.LENGTH_SHORT).show();
+        displayPromptForEnablingGPS(this);
+
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+    //Google Location Services
 }
 
 

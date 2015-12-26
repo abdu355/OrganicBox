@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ListView orders;
     List<ParseObject> ob;
@@ -45,9 +45,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView userview;
     private List<OrderBox> orderBoxList = null;
     final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    private ImageView mapbtn,basketbtn;
+    private ImageView mapbtn, basketbtn;
+    ParseUser currentUser;
 
-//hello
+    //hello
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,22 +65,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(getApplicationContext(), NewOrder.class));
             }
         });
-        ParseUser currentUser = ParseUser.getCurrentUser();//check if user logged in
-        if (currentUser == null) {
-            loadLoginView();
-        }
 
-        userview = (TextView)findViewById(R.id.userview_main);
-        orders =(ListView)findViewById(R.id.lv_orders);
-        mapbtn=(ImageView)findViewById(R.id.map_btn);
-        basketbtn=(ImageView)findViewById(R.id.basket_btn);
 
-        userview.setText(currentUser.getUsername()+"'s List of Orders");
+        userview = (TextView) findViewById(R.id.userview_main);
+        orders = (ListView) findViewById(R.id.lv_orders);
+        mapbtn = (ImageView) findViewById(R.id.map_btn);
+        basketbtn = (ImageView) findViewById(R.id.basket_btn);
+
+
         mapbtn.setOnClickListener(this);
         basketbtn.setOnClickListener(this);
 
-
     }
+
     public void loadLoginView() {
         Intent intent = new Intent(this, Login.class); //go to login activity
         startActivity(intent);
@@ -103,17 +101,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_settings) {
             return true;
         }
-        if(id==R.id.action_logout)
-        {
+        if (id == R.id.action_logout) {
             ParseUser.logOut();//update Parse current user
             loadLoginView();//load login activity
         }
-        if(id==R.id.action_wishlist)
-        {
-                startActivity(new Intent(this,Wishlist.class));
+        if (id == R.id.action_wishlist) {
+            startActivity(new Intent(this, Wishlist.class));
         }
-        if(id==R.id.action_refresh)
-        {
+        if (id == R.id.action_refresh) {
             new RemoteDataTask().execute();
         }
 
@@ -123,18 +118,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        new RemoteDataTask().execute();
+        currentUser = ParseUser.getCurrentUser();//check if user logged in
+        if (currentUser == null) {
+            loadLoginView();
+        } else {
+            userview.setText(currentUser.getUsername() + "'s List of Orders");
+            new RemoteDataTask().execute();
+        }
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId())
-        {
+        switch (v.getId()) {
             case R.id.map_btn:
-                startActivity(new Intent(this,MapsActivity.class));
+                startActivity(new Intent(this, MapsActivity.class));
                 break;
             case R.id.basket_btn:
-                startActivity(new Intent(this,MyBasket.class));
+                startActivity(new Intent(this, MyBasket.class));
                 break;
         }
     }
@@ -169,19 +169,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ob = query.find();
                 for (ParseObject order : ob) {
                     // Locate images in flag column
-                    ParseObject imageobject = (ParseObject)order.get("image");
-                    ParseFile image= imageobject.getParseFile("image");
+                    ParseObject imageobject = (ParseObject) order.get("image");
+                    ParseFile image = imageobject.getParseFile("image");
 
                     OrderBox map = new OrderBox();
                     map.setName((String) order.get("name"));
                     map.setOrdernum(order.getObjectId());
                     map.setDate(formatter.format(order.getCreatedAt()).toString());
                     map.setImage(image.getUrl());
-                    map.setType((String)order.get("type"));
-                    map.setStatus((String)order.get("tracker_status"));
+                    map.setType((String) order.get("type"));
+                    map.setStatus((String) order.get("tracker_status"));
                     orderBoxList.add(map);
                 }
-            } catch (ParseException |NullPointerException e) {
+            } catch (ParseException | NullPointerException e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
@@ -195,9 +195,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             adapter = new ListViewAdapter(MainActivity.this,
                     orderBoxList);
             // Binds the Adapter to the ListView
-            if(adapter.getCount()!=0){
+            if (adapter.getCount() != 0) {
                 orders.setAdapter(adapter);
-            }else{
+            } else {
                 Toast.makeText(MainActivity.this, "No Items Available", Toast.LENGTH_SHORT).show();
                 Toast.makeText(MainActivity.this, "Click to Add new Order --->", Toast.LENGTH_SHORT).show();
             }
