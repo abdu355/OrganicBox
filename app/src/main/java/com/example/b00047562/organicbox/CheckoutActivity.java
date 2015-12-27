@@ -90,7 +90,9 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         //Google Location Services
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
-        } else{}
+        } else{
+            //displayPromptForEnablingGPS(this);
+        }
         //Toast.makeText(this, "Not connected...", Toast.LENGTH_SHORT).show();
         //Google Location Services
     }
@@ -106,12 +108,14 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void validatePay() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
-        Card card = new Card(cardnum.getText().toString().trim(), Integer.parseInt(emonth.getText().toString()), Integer.parseInt(eyear.getText().toString()), cvc.getText().toString().trim());
+        final Card card = new Card(cardnum.getText().toString().trim(), Integer.parseInt(emonth.getText().toString()), Integer.parseInt(eyear.getText().toString()), cvc.getText().toString().trim());
+        final Stripe stripe = new Stripe("pk_test_GxD0bUCCzUEqy2CKiKf8TEcB");
         //Log.d("cardinfo", cardnum.getText().toString().trim() + "\n" + emonth.getText().toString() + "\n" + eyear.getText().toString() + "\n" + cvc.getText().toString().trim());
-
         //card.validateCard();
         if (card.validateCard()) {
-            Stripe stripe = new Stripe("pk_test_GxD0bUCCzUEqy2CKiKf8TEcB");
+            CheckoutActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+
             stripe.createToken(
                     card,
                     new TokenCallback() {
@@ -131,6 +135,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                             } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e1) {
                                 Toast.makeText(getApplicationContext(), "Customer Create Error", Toast.LENGTH_SHORT).show();
                             }
+
 
                             ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
                             query.getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseObject>() {
@@ -160,6 +165,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                             }
 
 
+
                             // /*save Orders to parse here */
                             ParseQuery<ParseObject> querybasket = ParseQuery.getQuery("Basket");
                             querybasket.whereEqualTo("createdBy", ParseUser.getCurrentUser());
@@ -177,19 +183,21 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                             orderlist.put("type", basketlist.get(i).get("type"));
                                             orderlist.put("orderaddress", billadd.getText().toString());
                                             orderlist.put("image", basketlist.get(i).get("image"));
-                                            orderlist.put("tracker_status","Preparing");
-                                            orderlist.put("order_loc", new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                            orderlist.put("tracker_status", "Preparing");
+                                            if (mLastLocation != null)
+                                                orderlist.put("order_loc", new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                            else
+                                                orderlist.put("order_loc", new ParseGeoPoint(0, 0));
                                             neworderslist.add(i, orderlist);
                                         }
                                         orderlist.saveAllInBackground(neworderslist);
-                                        for(int i=0; i<size;i++)
-                                        {
+                                        for (int i = 0; i < size; i++) {
                                             try {
                                                 basketlist.get(i).delete();
                                                 //basketlist.get(i).saveInBackground();
                                             } catch (ParseException e1) {
                                                 Toast.makeText(getApplicationContext(), "Basket Clear Failed", Toast.LENGTH_SHORT).show();
-                                                Log.d("ParseBasket",e1.getMessage());
+                                                Log.d("ParseBasket", e1.getMessage());
                                             }
                                         }
 
@@ -199,7 +207,6 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                 }
                             });
 
-
                         }
 
                         public void onError(Exception error) {
@@ -207,6 +214,8 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                             Toast.makeText(getApplicationContext(), "Token Error", Toast.LENGTH_LONG).show();
                         }
                     });
+                }
+            });
         } else {
             Toast.makeText(getApplicationContext(), "Validation Error", Toast.LENGTH_SHORT).show();
         }

@@ -152,6 +152,7 @@ public class Wishlist extends AppCompatActivity implements View.OnClickListener 
                             Log.d("ParseBasket",e1.getMessage());
                         }
                     }
+                    finish();
                 } else {
 
                 }

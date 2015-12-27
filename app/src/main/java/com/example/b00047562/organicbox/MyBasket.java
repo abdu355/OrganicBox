@@ -83,7 +83,9 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
         //Google Location Services
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
-        } else{}
+        } else{
+            //displayPromptForEnablingGPS(this);
+        }
             //Toast.makeText(this, "Not connected...", Toast.LENGTH_SHORT).show();
         //Google Location Services
     }
@@ -251,7 +253,10 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                                 orderlist.put("orderaddress", ParseUser.getCurrentUser().get("BillingAddress"));
                                 orderlist.put("image", basketlist.get(i).get("image"));
                                 orderlist.put("tracker_status", "Preparing");
-                                orderlist.put("order_loc", new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                if(mLastLocation!=null)
+                                    orderlist.put("order_loc", new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                else
+                                    orderlist.put("order_loc", new ParseGeoPoint(0,0));
                                 neworderslist.add(i, orderlist);
                             }
                             orderlist.saveAllInBackground(neworderslist);
@@ -270,10 +275,15 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                     }
                 });
 
-            } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+            } catch (NullPointerException|AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
                 Log.d("Stripe", e.getMessage());
-                Toast.makeText(getApplicationContext(), "No ID found", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), CheckoutActivity.class));
+                MyBasket.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "No ID found", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), CheckoutActivity.class));
+                    }
+                });
+
             }
             return null;
         }
@@ -304,6 +314,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                             Log.d("ParseBasket", e1.getMessage());
                         }
                     }
+                    finish();
                 } else {
 
                 }
