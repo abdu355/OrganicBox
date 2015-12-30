@@ -92,7 +92,7 @@ public class Wishlist extends AppCompatActivity implements View.OnClickListener 
         @Override
         protected Void doInBackground(Void... params) {
             orderBoxList = new ArrayList<OrderBox>();
-            // Locate the class table named "Country" in Parse.com
+            // Locate the class table named "WishList" in Parse.com
             ParseQuery<ParseObject> query = new ParseQuery("WishList");
             query.whereEqualTo("createdBy", ParseUser.getCurrentUser());
             query.include("image");
@@ -121,10 +121,10 @@ public class Wishlist extends AppCompatActivity implements View.OnClickListener 
         @Override
         protected void onPostExecute(Void result) {
             orders = (ListView) findViewById(R.id.lv_wishlist);
-            // Pass the results into ListViewAdapter.java
+
             adapter = new WishAdapter(Wishlist.this,
                     orderBoxList);
-            // Binds the Adapter to the ListView
+
             if (adapter.getCount() != 0) {
                 orders.setAdapter(adapter);
             } else {

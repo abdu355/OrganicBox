@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected Void doInBackground(Void... params) {
             orderBoxList = new ArrayList<OrderBox>();
             ParseUser usr = ParseUser.getCurrentUser();
-            // Locate the class table named "Country" in Parse.com
+            // Locate the class table named "Orders" in Parse.com
             ParseQuery<ParseObject> query = new ParseQuery("Orders");
             query.whereEqualTo("createdBy", ParseUser.getCurrentUser());
             query.include("image");
@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     map.setImage(image.getUrl());
                     map.setType((String) order.get("type"));
                     map.setStatus((String) order.get("tracker_status"));
+                    map.setPrice(order.getString("price"));
                     orderBoxList.add(map);
                 }
             } catch (ParseException | NullPointerException e) {

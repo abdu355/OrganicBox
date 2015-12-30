@@ -80,12 +80,12 @@ public class NewOrderListAdapter extends BaseAdapter {
 
             @Override
             public void onClick(View arg0) {
-                // Send single item click data to SingleItemView Class
+
                 Intent intent = new Intent(context, SingleNewOrderView.class);
-                // Pass all data rank
+
                 intent.putExtra("name", (orderBoxList.get(position).getName()));
                 intent.putExtra("image", (orderBoxList.get(position).getImage()));
-                // Start SingleItemView Class
+
                 intent.putExtra("type",orderBoxList.get(position).getType());
                 context.startActivity(intent);
             }

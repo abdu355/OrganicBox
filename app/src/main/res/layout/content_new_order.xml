@@ -28,7 +28,9 @@
         android:id="@+id/et_searchbox"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:text="@string/et_searchbox" />
+        android:text="@string/et_searchbox"
+        android:imeOptions="actionDone"
+        android:singleLine="true" />
 
     <ListView
         android:layout_width="wrap_content"

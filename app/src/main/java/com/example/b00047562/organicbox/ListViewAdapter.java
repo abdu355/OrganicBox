@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView ordernum;
         TextView date;
         TextView type;
+        TextView price;
         ImageView image;
     }
 
@@ -66,6 +69,7 @@ public class ListViewAdapter extends BaseAdapter {
             holder.ordernum = (TextView) view.findViewById(R.id.ordernum);
             holder.date = (TextView) view.findViewById(R.id.date);
             holder.type = (TextView)view.findViewById(R.id.type);
+            holder.price=(TextView)view.findViewById(R.id.price);
             // Locate the ImageView in listview_item.xml
             holder.image = (ImageView) view.findViewById(R.id.flag);
             view.setTag(holder);
@@ -78,6 +82,7 @@ public class ListViewAdapter extends BaseAdapter {
         holder.date.setText(orderBoxList.get(position)
                 .getDate());
         holder.type.setText(orderBoxList.get(position).getType());
+        holder.price.setText(orderBoxList.get(position).getPrice());
         // Set the results into ImageView
         imageLoader.DisplayImage(orderBoxList.get(position).getImage(),
                 holder.image);
@@ -100,6 +105,7 @@ public class ListViewAdapter extends BaseAdapter {
                 intent.putExtra("status",orderBoxList.get(position).getStatus());
                 // Start SingleItemView Class
                 intent.putExtra("type",orderBoxList.get(position).getType());
+                intent.putExtra("price",orderBoxList.get(position).getPrice());
                 context.startActivity(intent);
             }
         });

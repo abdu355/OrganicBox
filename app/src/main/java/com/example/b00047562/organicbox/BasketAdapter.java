@@ -47,6 +47,7 @@ public class BasketAdapter extends BaseAdapter {
     public class ViewHolder {
         TextView name;
         TextView type;
+        TextView price;
         ImageView image;
     }
 
@@ -73,6 +74,7 @@ public class BasketAdapter extends BaseAdapter {
             // Locate the TextViews in listview_item.xml
             holder.name = (TextView) view.findViewById(R.id.name);
             holder.type = (TextView) view.findViewById(R.id.type);
+            holder.price=(TextView)view.findViewById(R.id.ordernum);
             // Locate the ImageView in listview_item.xml
             holder.image = (ImageView) view.findViewById(R.id.flag);
             view.setTag(holder);
@@ -82,6 +84,7 @@ public class BasketAdapter extends BaseAdapter {
         // Set the results into TextViews
         holder.name.setText(orderBoxList.get(position).getName());
         holder.type.setText(orderBoxList.get(position).getType());
+        holder.price.setText(orderBoxList.get(position).getPrice());
         // Set the results into ImageView
         imageLoader.DisplayImage(orderBoxList.get(position).getImage(), holder.image);
         // Listen for ListView Item Click

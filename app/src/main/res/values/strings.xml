@@ -30,7 +30,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_new_order">New Order</string>
     <string name="et_searchbox" />
-    <string name="wish_btn">Add to Wishlist</string>
+    <string name="wish_btn">Add to Favorites</string>
     <string name="addbasket_btn">Add to Basket</string>
     <string name="tv_outofstockalert" />
     <string name="title_activity_single_new_order_view">Item</string>
@@ -45,10 +45,25 @@
     <string name="editText_creditcardnum" />
     <string name="editText_CVC" />
     <string name="btn_paybasket">QuickPay</string>
-    <string name="wishlist_label">Wishlist</string>
+    <string name="wishlist_label">Favorites</string>
     <string name="refresh_label">Refresh</string>
-    <string name="title_activity_wishlist">Wishlist</string>
-    <string name="clear_wishlist">Clear Wishlist</string>
+    <string name="title_activity_wishlist">Favorites</string>
+    <string name="clear_wishlist">Clear Favorites</string>
+    <string name="action_clearfilter">Clear Filter</string>
+
+    <string-array name="kg_keys">
+        <item >2 KG</item>
+        <item >5 KG</item>
+        <item >10 KG</item>
+        <item> 15 KG</item>
+    </string-array>
+    <string-array name="kg_values">
+        <item >2</item>
+        <item >5</item>
+        <item >10</item>
+        <item >15</item>
+    </string-array>
+
 
 
 </resources>

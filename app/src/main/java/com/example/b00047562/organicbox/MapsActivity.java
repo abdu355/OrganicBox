@@ -66,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
             LatLng farmloc = new LatLng(25.199053, 55.517835);
-            //mMap.addMarker(new MarkerOptions().position(farmloc).title("Rashid Farms"));
+
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(farmloc)      // Sets the center of the map to Mountain View
                     .zoom(16)                   // Sets the zoom
@@ -76,10 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             mMap.addMarker(new MarkerOptions().position(farmloc).title("Rashed Farms"));
 
-            // Add a marker in Sydney and move the camera
-            //LatLng sydney = new LatLng(-34, 151);
-            //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
         }
     }
 }

@@ -14,13 +14,12 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:id="@+id/list_basket"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="44dp"
-        android:layout_above="@+id/checkout_btn"
         android:choiceMode="none"
         android:clickable="false"
         android:longClickable="false" />
@@ -58,7 +57,15 @@
         android:layout_height="wrap_content"
         android:text="@string/btn_paybasket"
         android:id="@+id/btn_paybasket"
-        android:layout_below="@+id/list_basket"
+        android:layout_alignTop="@+id/checkout_btn"
         android:layout_toLeftOf="@+id/checkout_btn"
         android:layout_toStartOf="@+id/checkout_btn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/totalpricetag"
+        android:layout_above="@+id/clear_btn"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

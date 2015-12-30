@@ -65,6 +65,8 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
     ProgressDialog mProgressDialog;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
+    private Double chargeamount;
+    private Double totalcharge;
 
 
     @Override
@@ -95,7 +97,11 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         }
         //Toast.makeText(this, "Not connected...", Toast.LENGTH_SHORT).show();
         //Google Location Services
+
+        Intent i = getIntent();
+        totalcharge = i.getDoubleExtra("totalcharge",Math.round(1));
     }
+
 
     @Override
     public void onClick(View v) {
@@ -112,6 +118,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         final Stripe stripe = new Stripe("pk_test_GxD0bUCCzUEqy2CKiKf8TEcB");
         //Log.d("cardinfo", cardnum.getText().toString().trim() + "\n" + emonth.getText().toString() + "\n" + eyear.getText().toString() + "\n" + cvc.getText().toString().trim());
         //card.validateCard();
+
         if (card.validateCard()) {
             CheckoutActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
@@ -150,19 +157,13 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
 
 
                             final Map<String, Object> chargeParams = new HashMap<String, Object>();
-                            chargeParams.put("amount", 100 * 20);//$20.00
-                            chargeParams.put("currency", "usd");
+
+                            chargeParams.put("currency", "aed");
                             chargeParams.put("customer", customer.getId());
                             chargeParams.put("description", "OrganicBox Purchase");
 
-                                /*save CUSTOMER ID to parse here */
-                            try {
-                                Charge.create(chargeParams);//charge card
 
-                                Toast.makeText(getApplicationContext(), "Payment Processed", Toast.LENGTH_SHORT).show();
-                            } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e2) {
-                                Toast.makeText(getApplicationContext(), "Card Declined", Toast.LENGTH_SHORT).show();
-                            }
+
 
 
 
@@ -184,6 +185,9 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                             orderlist.put("orderaddress", billadd.getText().toString());
                                             orderlist.put("image", basketlist.get(i).get("image"));
                                             orderlist.put("tracker_status", "Preparing");
+                                            chargeamount=basketlist.get(i).getDouble("price");
+                                            orderlist.put("price",chargeamount);
+
                                             if (mLastLocation != null)
                                                 orderlist.put("order_loc", new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                                             else
@@ -206,7 +210,14 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 }
                             });
+                            chargeParams.put("amount",Math.round(totalcharge*100));
+                            try {
+                                Charge.create(chargeParams);//charge card
 
+                                Toast.makeText(getApplicationContext(), "Payment Processed", Toast.LENGTH_SHORT).show();
+                            } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e2) {
+                                Toast.makeText(getApplicationContext(), "Card Declined", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         public void onError(Exception error) {
@@ -254,6 +265,24 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
             mProgressDialog.dismiss();
             Vibrator vibe = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE) ;
             vibe.vibrate(50); // 50 is time in ms
+
+            ParseQuery<ParseObject> querycharge = ParseQuery.getQuery("Totals");
+            querycharge.whereEqualTo("createdBy", ParseUser.getCurrentUser());
+            querycharge.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> totalist, ParseException e) {
+                    if (e == null) {
+                        int size = totalist.size();
+                        for (int i = 0; i < size; i++) {
+                            totalist.get(i).put("total", 0.0);
+                            totalist.get(i).saveInBackground();
+                        }
+                        finish();
+                    } else {
+
+                    }
+                }
+            });
+
             finish();
 
         }

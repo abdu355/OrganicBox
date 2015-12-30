@@ -10,6 +10,7 @@ public class OrderBox {
     private String image;
     private String type;
     private String stat;
+    private String price;
 
     public String getName() {
         return name;
@@ -57,5 +58,14 @@ public class OrderBox {
     public String getStatus()
     {
         return stat;
+    }
+
+    public void setPrice(String price)
+    {
+        this.price=price;
+    }
+    public String getPrice()
+    {
+        return price;
     }
 }

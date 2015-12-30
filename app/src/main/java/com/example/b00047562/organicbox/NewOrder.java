@@ -1,6 +1,7 @@
 package com.example.b00047562.organicbox;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,7 +9,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,6 +45,7 @@ public class NewOrder extends AppCompatActivity {
     NewOrderListAdapter adapter;
     private List<OrderBox> stockList = null;
     EditText searchbox;
+    String searchcontent;
 
 
     @Override
@@ -51,7 +58,19 @@ public class NewOrder extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        searchbox = (EditText)findViewById(R.id.et_searchbox);
+
+        searchbox = (EditText) findViewById(R.id.et_searchbox);
+
+        searchbox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    searchcontent = searchbox.getText().toString().trim();
+                    searchcontent= capitalizeFirstLetter(searchcontent);
+                    new SearchTask().execute(searchcontent);
+                }
+                return false;
+            }
+        });
 
     }
 
@@ -60,6 +79,13 @@ public class NewOrder extends AppCompatActivity {
         super.onResume();
         new RemoteDataTask().execute();
     }
+    public String capitalizeFirstLetter(String original) {
+        if (original == null || original.length() == 0) {
+            return original;
+        }
+        return original.substring(0, 1).toUpperCase() + original.substring(1);
+    }
+
 
     //RemoteDataTask AsyncTask
     private class RemoteDataTask extends android.os.AsyncTask<Void, Void, Void> {
@@ -86,12 +112,12 @@ public class NewOrder extends AppCompatActivity {
             try {
                 ob = query.find();
                 for (ParseObject order : ob) {
-                    // Locate images in flag column
+                    // Locate images in image column
 
-                    ParseFile image= (ParseFile) order.get("image");
+                    ParseFile image = (ParseFile) order.get("image");
                     OrderBox map = new OrderBox();
                     map.setName((String) order.get("name"));
-                    map.setType((String)order.get("type"));
+                    map.setType((String) order.get("type"));
                     map.setImage(image.getUrl());
                     stockList.add(map);
                 }
@@ -105,13 +131,13 @@ public class NewOrder extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             orders = (ListView) findViewById(R.id.listview_neworder);
-            // Pass the results into ListViewAdapter.java
+
             adapter = new NewOrderListAdapter(NewOrder.this,
                     stockList);
             // Binds the Adapter to the ListView
-            if(adapter.getCount()!=0){
+            if (adapter.getCount() != 0) {
                 orders.setAdapter(adapter);
-            }else{
+            } else {
 
             }
             // Close the progressdialog
@@ -120,4 +146,85 @@ public class NewOrder extends AppCompatActivity {
         }
     }
 
+    private class SearchTask extends android.os.AsyncTask<String, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Create a progressdialog
+            mProgressDialog = new ProgressDialog(NewOrder.this);
+            // Set progressdialog title
+            mProgressDialog.setTitle("Filter");
+            // Set progressdialog message
+            mProgressDialog.setMessage("Searching...");
+            mProgressDialog.setIndeterminate(false);
+            // Show progressdialog
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            stockList = new ArrayList<OrderBox>();
+            ParseQuery<ParseObject> query = new ParseQuery("Stock");
+            query.whereContains("name",params[0]);
+            query.orderByAscending("name");
+
+            try {
+                ob = query.find();
+                for (ParseObject order : ob) {
+                    // Locate images in flag column
+
+                    ParseFile image = (ParseFile) order.get("image");
+                    OrderBox map = new OrderBox();
+                    map.setName((String) order.get("name"));
+                    map.setType((String) order.get("type"));
+                    map.setImage(image.getUrl());
+                    stockList.add(map);
+                }
+            } catch (ParseException e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            orders = (ListView) findViewById(R.id.listview_neworder);
+
+            adapter = new NewOrderListAdapter(NewOrder.this,
+                    stockList);
+            // Binds the Adapter to the ListView
+            if (adapter.getCount() != 0) {
+                orders.setAdapter(adapter);
+            } else {
+                Toast.makeText(getApplicationContext(),"No item found in stock",Toast.LENGTH_SHORT).show();
+            }
+            // Close the progressdialog
+            mProgressDialog.dismiss();
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.neworder, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_clearfilter) {
+            InputMethodManager keyboard = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.hideSoftInputFromWindow(searchbox.getWindowToken(), 0);
+            searchbox.setText("");
+            new RemoteDataTask().execute();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

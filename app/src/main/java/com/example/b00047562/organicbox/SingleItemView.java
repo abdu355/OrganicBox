@@ -10,10 +10,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 public class SingleItemView extends AppCompatActivity {
 
-    TextView txtname,txttype,txtdate,txtstat,txtorderid;
-    String name,type,date,status,order_id;
+    TextView txtname,txttype,txtdate,txtstat,txtorderid,txtprice;
+    String name,type,date,status,order_id,price;
     String image;
     String position;
     ImageLoader imageLoader = new ImageLoader(this);
@@ -41,6 +43,8 @@ public class SingleItemView extends AppCompatActivity {
         date=i.getStringExtra("date");
         status=i.getStringExtra("status");
         order_id=i.getStringExtra("ordernum");
+        price=i.getStringExtra("price");
+
         image=i.getStringExtra("image");
 
         // Locate the TextView in singleitemview.xml
@@ -49,6 +53,7 @@ public class SingleItemView extends AppCompatActivity {
         txtdate= (TextView) findViewById(R.id.date);
         txtstat= (TextView) findViewById(R.id.status);
         txtorderid=(TextView)findViewById(R.id.ordernum);
+        txtprice=(TextView)findViewById(R.id.price);
 
         ImageView imgflag = (ImageView) findViewById(R.id.flag);
 
@@ -58,6 +63,7 @@ public class SingleItemView extends AppCompatActivity {
         txtdate.setText("Date: "+date);
         txtstat.setText("Status: "+status);
         txtorderid.setText("Order No.: "+order_id);
+        txtprice.setText("Price: "+price);
 
         imageLoader.DisplayImage(image, imgflag);
     }
