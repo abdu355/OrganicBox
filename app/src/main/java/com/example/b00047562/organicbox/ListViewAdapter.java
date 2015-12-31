@@ -79,8 +79,7 @@ public class ListViewAdapter extends BaseAdapter {
         // Set the results into TextViews
         holder.name.setText(orderBoxList.get(position).getName());
         holder.ordernum.setText(orderBoxList.get(position).getOrdernum());
-        holder.date.setText(orderBoxList.get(position)
-                .getDate());
+        holder.date.setText(orderBoxList.get(position).getDate());
         holder.type.setText(orderBoxList.get(position).getType());
         holder.price.setText(orderBoxList.get(position).getPrice());
         // Set the results into ImageView

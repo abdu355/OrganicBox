@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +36,7 @@ public class Signup extends AppCompatActivity implements SensorEventListener {
     protected EditText passwordEditText;
     protected EditText emailEditText;
     protected EditText dobEditText;
+    protected EditText shipadd,mobilenum;
     protected Button signUpButton;
     private static final int SHAKE_THRESHOLD = 1700;
     private SensorManager MySensorManager;
@@ -42,6 +45,7 @@ public class Signup extends AppCompatActivity implements SensorEventListener {
     private long lastUpdate;
     private ArrayList<AccelData> sensorData;
     boolean dialogShown;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,10 @@ public class Signup extends AppCompatActivity implements SensorEventListener {
         emailEditText = (EditText)findViewById(R.id.et_email);
         signUpButton = (Button)findViewById(R.id.btn_sign);
         dobEditText = (EditText)findViewById(R.id.et_dob);
+        shipadd=(EditText)findViewById(R.id.et_shipad);
+        mobilenum=(EditText)findViewById(R.id.et_mobilenum);
         dialogShown=false;
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Acc
         MySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -75,13 +82,17 @@ public class Signup extends AppCompatActivity implements SensorEventListener {
             public void onClick(View v) {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                String email = emailEditText.getText().toString();
+                String email = emailEditText.getText().toString().trim();
+                String dateofbirth = dobEditText.getText().toString().trim();
+                String shipad = shipadd.getText().toString().trim();
+                String mobile = mobilenum.getText().toString().trim();
+
 
                 username = username.trim();
                 password = password.trim();
                 email = email.trim();
 
-                if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+                if (username.isEmpty() || password.isEmpty() || email.isEmpty() || dateofbirth.isEmpty() || shipad.isEmpty() || mobile.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(Signup.this);
                     builder.setMessage(R.string.signup_error_message)
                             .setTitle(R.string.signup_error_title)
@@ -96,7 +107,13 @@ public class Signup extends AppCompatActivity implements SensorEventListener {
                     newUser.setUsername(username);
                     newUser.setPassword(password);
                     newUser.setEmail(email);
-                    newUser.put("DOB", dobEditText.getText().toString());
+                    newUser.put("DOB", dateofbirth);
+                    newUser.put("ShippingAdd", shipad);
+                    newUser.put("MobileNo",mobile);
+
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("ShipAd",shipad);
+                    editor.commit();
 
                     //newUser.pinInBackground();
                     newUser.signUpInBackground(new SignUpCallback() {
@@ -132,7 +149,7 @@ public class Signup extends AppCompatActivity implements SensorEventListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.sign_up, menu);
+        //getMenuInflater().inflate(R.menu.sign_up, menu);
         return true;
     }
     @Override

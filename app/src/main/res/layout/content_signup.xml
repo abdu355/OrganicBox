@@ -20,10 +20,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="@string/et_name"
             android:ems="10"
             android:id="@+id/et_name"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:hint="Name"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -32,7 +32,7 @@
             android:ems="10"
             android:id="@+id/et_pass"
             android:layout_gravity="center_horizontal"
-            android:text="@string/et_passsign" />
+            android:hint="Password"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:ems="10"
             android:id="@+id/et_email"
             android:layout_gravity="center_horizontal"
-            android:text="@string/et_emailsign" />
+            android:hint="Email"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -50,7 +50,25 @@
             android:ems="10"
             android:id="@+id/et_dob"
             android:layout_gravity="center_horizontal"
-            android:text="@string/et_dob" />
+            android:hint="Date of Birth"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/et_shipad"
+            android:layout_gravity="center_horizontal"
+            android:hint="Shipping Address"
+            android:inputType="text" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/et_mobilenum"
+            android:layout_gravity="center_horizontal"
+            android:hint="Mobile Number"/>
 
         <Button
             android:layout_width="fill_parent"

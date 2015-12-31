@@ -124,7 +124,7 @@ public class SingleNewOrderView extends AppCompatActivity implements View.OnClic
         myMap.put("Lettuce", "9xoOQRui2e");
 
         queryitemprice();
-        getPrice(0);
+        //getPrice(0);
         pricetag.setText("AED " + String.valueOf(price));
 
         typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -138,7 +138,8 @@ public class SingleNewOrderView extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+                getPrice(0);
+                pricetag.setText("AED " + String.valueOf(price));
             }
 
         });

@@ -2,11 +2,13 @@ package com.example.b00047562.organicbox;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private ImageView mapbtn, basketbtn;
     ParseUser currentUser;
+    private SharedPreferences prefs;
+    Intent service;
 
     //hello
     @Override
@@ -76,6 +80,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mapbtn.setOnClickListener(this);
         basketbtn.setOnClickListener(this);
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        // get default SharedPreferences object
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        service = new Intent(this, NotificationService.class);
     }
 
     public void loadLoginView() {
@@ -99,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
         }
         if (id == R.id.action_logout) {
             ParseUser.logOut();//update Parse current user
@@ -118,12 +126,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+
         currentUser = ParseUser.getCurrentUser();//check if user logged in
         if (currentUser == null) {
             loadLoginView();
         } else {
             userview.setText(currentUser.getUsername() + "'s List of Orders");
             new RemoteDataTask().execute();
+        }
+
+        if(prefs.getBoolean("pref_remember_notification",true))
+        {
+            startService(service);
+        }
+        else
+        {
+            stopService(service);
         }
     }
 
@@ -179,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     map.setImage(image.getUrl());
                     map.setType((String) order.get("type"));
                     map.setStatus((String) order.get("tracker_status"));
-                    map.setPrice(order.getString("price"));
+                    map.setPrice("AED "+String.valueOf(order.getDouble("price")));
                     orderBoxList.add(map);
                 }
             } catch (ParseException | NullPointerException e) {
@@ -200,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 orders.setAdapter(adapter);
             } else {
                 Toast.makeText(MainActivity.this, "No Items Available", Toast.LENGTH_SHORT).show();
-                Toast.makeText(MainActivity.this, "Click to Add new Order --->", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Click to Add new Order --->", Toast.LENGTH_SHORT).show();
             }
             // Close the progressdialog
             mProgressDialog.dismiss();

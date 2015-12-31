@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -66,7 +67,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
     private TextView totalprice;
     double charge_val, chargetotal;
     private String cust_id;
-    SharedPreferences savedValues;
+    SharedPreferences prefs;
 
     private GoogleApiClient client;
 
@@ -94,7 +95,8 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
         StrictMode.setThreadPolicy(policy);//required by Stripe
         buildGoogleApiClient();
 
-       savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
+       //savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Google Location Services
         if (mGoogleApiClient != null) {
@@ -119,7 +121,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.checkout_btn:
                 Intent i = new Intent(getApplicationContext(),CheckoutActivity.class);
-                i.putExtra("totalcharge",savedValues.getFloat("chargetotal",1));
+                //i.putExtra("totalcharge",prefs.getFloat("chargetotal",1));
                 startActivity(i);
                 break;
             case R.id.btn_paybasket:
@@ -191,7 +193,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                     OrderBox map = new OrderBox();
                     map.setName((String) order.get("name"));
                     map.setType((String) order.get("type"));
-                    map.setPrice(order.getString("price"));
+                    map.setPrice("AED " + String.valueOf(order.getDouble("price")));
                     map.setImage(image.getUrl());
                     orderBoxList.add(map);
 
@@ -250,7 +252,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                 cust_id = ParseUser.getCurrentUser().get("CustomerID").toString();
 
                 final Map<String, Object> quickchargeParams = new HashMap<String, Object>();
-                quickchargeParams.put("amount", Math.round(100*savedValues.getFloat("chargetotal",1*100)));//charge amount
+                quickchargeParams.put("amount", Math.round(100*prefs.getFloat("chargetotal",1*100)));//charge amount
                 quickchargeParams.put("currency", "aed");
                 quickchargeParams.put("customer", cust_id);
                 quickchargeParams.put("description", "OrganicBox Purchase");
@@ -311,7 +313,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                     public void run() {
                         Toast.makeText(getApplicationContext(), "No ID found", Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(getApplicationContext(),CheckoutActivity.class);
-                        i.putExtra("totalcharge",savedValues.getFloat("chargetotal",1));
+                        //i.putExtra("totalcharge",prefs.getFloat("chargetotal",1));
                         startActivity(i);
                     }
                 });
@@ -455,7 +457,7 @@ public class MyBasket extends AppCompatActivity implements View.OnClickListener,
                     if (totalist.size() > 0) {
                         charge_val = totalist.get(0).getDouble("total");
                         totalprice.setText("Total Charge: AED " + charge_val);
-                        SharedPreferences.Editor editor = savedValues.edit();
+                        SharedPreferences.Editor editor = prefs.edit();
                         editor.putFloat("chargetotal", (float)charge_val);
                         editor.commit();
                     } else {

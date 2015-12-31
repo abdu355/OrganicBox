@@ -1,6 +1,7 @@
 package com.example.b00047562.organicbox;
 
 import android.app.Application;
+import android.content.Intent;
 
 import com.parse.Parse;
 
@@ -18,6 +19,9 @@ public class ParseApp extends Application {
         // Add your initialization code here
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, YOUR_APPLICATION_ID, YOUR_CLIENT_KEY);
+
+        Intent service = new Intent(this, NotificationService.class);
+        startService(service);
 
     }
 }

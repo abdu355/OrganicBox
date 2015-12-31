@@ -108,6 +108,7 @@ public class Wishlist extends AppCompatActivity implements View.OnClickListener 
                     OrderBox map = new OrderBox();
                     map.setName((String) order.get("name"));
                     map.setType((String) order.get("type"));
+                    map.setPrice("AED "+String.valueOf(order.getDouble("price")));
                     map.setImage(image.getUrl());
                     orderBoxList.add(map);
                 }
